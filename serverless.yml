@@ -1,0 +1,22 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: surendrakumar
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: aws-api
+service: aws-node-express-api
+
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  timeout: 30
+  region: us-east-1
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi: "*"
+
+
+plugins:
+  - serverless-offline

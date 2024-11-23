@@ -1,0 +1,27 @@
+{
+  "name": "aws-node-express-api",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "serverless offline start",
+    "update": "serverless deploy"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "mongoose": "^8.8.1",
+    "multer": "^1.4.5-lts.1",
+    "rate-limit-redis": "^4.2.0",
+    "redis": "^4.7.0",
+    "serverless-http": "^3.2.0",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "serverless-offline": "^14.3.4"
+  }
+}
