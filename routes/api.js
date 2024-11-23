@@ -117,6 +117,7 @@ router.post("/verify-otp", async function (req, res) {
         }
 
         await connectRedis();
+        await connectToDatabase();
 
         // Fetch OTP from Redis
         let result = await redisClient.get(`M${data.whatsappNumber}`);
@@ -213,7 +214,7 @@ router.post("/login", async function (req, res) {
         const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
         const clientIp = ip.split(',')[0];
         logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify(data)}`);
-
+        await connectToDatabase();
         // Basic validation for required fields
         if (!data.whatsappNumber || !data.password) {
             return res.status(200).json({
@@ -281,7 +282,7 @@ router.post("/transactions/add-money", async (req, res) => {
         const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
         const clientIp = ip.split(',')[0];
         logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ userId, type, amount, transactionId })}`);
-
+        await connectToDatabase();
         // Validate input
         if (!userId || !type || !amount) {
             return res
@@ -340,6 +341,7 @@ router.post("/transactions/withdraw", async (req, res) => {
         const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
         const clientIp = ip.split(',')[0];
         logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ userId, amount })}`);
+        await connectToDatabase();
 
         // Validate input
         if (!userId || !amount) {
@@ -423,6 +425,7 @@ router.post("/wallet-status", async function (req, res) {
         const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
         const clientIp = ip.split(',')[0];
         logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ userId })}`);
+        await connectToDatabase();
 
         if (!userId) {
             return res.status(400).json({ error: "User ID is required" });
@@ -508,6 +511,7 @@ router.post("/update-ts-status", async (req, res) => {
         const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
         const clientIp = ip.split(',')[0];
         logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ walletId, transactionId })}`);
+        await connectToDatabase();
 
         // Find the wallet by its ID
         const wallet = await Wallet.findById({ _id: walletId });
@@ -556,6 +560,7 @@ router.post("/verify-user", async (req, res) => {
     const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
     const clientIp = ip.split(',')[0];
     logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ username })}`);
+    await connectToDatabase();
 
     if (!username) {
         return res
@@ -593,6 +598,7 @@ router.post("/verify-admin", async (req, res) => {
     const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
     const clientIp = ip.split(',')[0];
     logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ username })}`);
+    await connectToDatabase();
 
     if (!username) {
         return res.status(200).json({ success: false, message: "Please Login" });
@@ -641,6 +647,7 @@ router.get('/create-new-address', async (req, res) => {
         const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
         const clientIp = ip.split(',')[0];
         logMessage(`someone requested ${req.path} from ${clientIp}`);
+        await connectToDatabase();
 
         const admin_wallet_address = await UsdtWallet.findOne({ "id": "admin" });
 
@@ -692,6 +699,7 @@ router.post("/withdraw-crypto", async (req, res) => {
     const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
     const clientIp = ip.split(',')[0];
     logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ to_address, amount })}`);
+    await connectToDatabase();
 
     if (!to_address || !amount) {
         return res
@@ -724,6 +732,7 @@ router.post("/withdraw-crypto", async (req, res) => {
 router.post("/webhook", upload.none(), async (req, res) => {
     // This api is only called by Coinremitter when someone pay on qr
     const userAgent = req.headers["user-agent"]; // Get the User-Agent header
+    await connectToDatabase();
 
     if (userAgent === "Coinremitter/api") {
         const ans = req.body;
@@ -780,6 +789,7 @@ router.post("/admin/wallet", async (req, res) => {
     const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
     const clientIp = ip.split(',')[0];
     logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ newWalletAddress })}`);
+    await connectToDatabase();
 
     if (!newWalletAddress) {
         return res.status(200).json({ success: false, message: "New wallet address is required" });
@@ -814,6 +824,7 @@ router.post('/get-invite-accounts', async (req, res) => {
     const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
     const clientIp = ip.split(',')[0];
     logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ userId })}`);
+    await connectToDatabase();
 
     if (!userId) {
         return res.status(400).json({ success: false, message: 'User ID is required' });
@@ -845,6 +856,7 @@ router.post('/add-bank-account', async (req, res) => {
     const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
     const clientIp = ip.split(',')[0];
     logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ accountNo, accountName, ifsc, userId })}`);
+    await connectToDatabase();
 
     // Validate input
     if (!accountNo || !accountName || !ifsc) {
@@ -882,6 +894,7 @@ router.post('/user/fetch-bank', async (req, res) => {
     const ip = req.headers["x-forwarded-for"]   || req.socket.remoteAddress;
     const clientIp = ip.split(',')[0];
     logMessage(`someone requested ${req.path} from ${clientIp},    ->  ${JSON.stringify({ userId })}`);
+    await connectToDatabase();
 
     try {
         // Find all bank accounts associated with the user ID
